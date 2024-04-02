@@ -1,0 +1,4 @@
+
+
+start :
+	python tissu.py
