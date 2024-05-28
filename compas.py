@@ -3,12 +3,101 @@ import torch
 import numpy as no
 from utillc import *
 import sympy.abc as X
-from sympy import Point2D, symbols, solve, cos, sin, lambdify
+from sympy import Point2D, symbols, solve, cos, sin, lambdify, Line
 import os, sys
 import random
 
+
+"""
+voir mon projet compas ( user = louis.chevallier@googlemail.com )
+https://www.geogebra.org/calculator
+
+A, B, J = Point
+O = Point2D(100, A.y)
+C' dans le cercle(A, a)
+angle(Line(O, A), Line(A, C)) = aa
+F dans le cercle(B, b)
+F dans le cercle(C, o)
+K dans cercle(C', d)
+K dans le cercle(J, n)
+N = JK * e
+H = C'F * k
+O dans cercle(N, l)
+O dans cercel(H, m)
+
+longueurs des joints
+a = 5.5
+b = 4.5
+d = 2.3
+n = 1.6
+(J, N) = 8.2
+(C', H) = 8.1
+l = 6
+m = 4.3
+
+
+"""
+
+l_symbols = list(range(10000))
+a, r, ra, rb = symbols("a r ra rb")
+
+def S(n="") :
+    s = symbols("%s_%d" % (n, l_symbols.pop(0)))
+    return s
+
+def Pf(n="") :
+    if len(n.split(" ")) > 1 :
+        return [ Pf(e) for e in n.split(" ")]
+    else :
+        x = symbols("x%s_%d" % (n, l_symbols.pop(0)))
+        y = symbols("y%s_%d" % (n, l_symbols.pop(0)))
+        return Point2D(x, y)
+
+
+eqq = True
+if eqq :
+    EKOX(Pf("A B J C F G K N H O"))
+    A, B, J, C, F, G, K, N, H, O = Pf("A B J C F G K N H O")
+    a, b, d, n, e, k, l, m, o, aa = symbols("a b d n e k l m o aa")
+    N = J + (K - J) * e
+    H = C + (F - C) * k
+    O = O = Point2D(100, A.y)
+
+    eq = [ Line(O, A).angle_between(Line(A, C)) - aa,
+           C.distance(A) - a]
+    sol = solve(eq, [ c for p in [C] for c in p.coordinates])    
+    EKOX(sol)
+
+    eq = [ Line(O, A).angle_between(Line(A, C)) - aa,
+           C.distance(A) - a,
+           F.distance(B) - b,
+           F.distance(C) - o,
+          ]
+
+    sol = solve(eq, [ c for p in [C, F] for c in p.coordinates])    
+    EKOX(sol)
+    
+    sol = solve(eq, [ c for p in [C, F] for c in p.coordinates])    
+    EKOX(sol)
+    
+    eq = [ Line(O, A).angle_between(Line(A, C)) - aa,
+           C.distance(A) - a,
+           F.distance(B) - b,
+           K.distance(C) - d,
+           K.distance(J) - n,
+           O.distance(N) - l,
+           K.distance(J) - m]
+    EKO()
+    sol = solve(eq, [ c for p in (H, O, N, K, F, C) for c in p.coordinates])
+    EKOX(sol)
+    
+
+
+
+
+
 EKO()
-experiment = False
+experiment = True
 
 if experiment :
     """
@@ -41,21 +130,10 @@ def f(u, v) :
         EKOX(f1(7., 1.))
 
 
-    sys.exit(0)
+    #sys.exit(0)
 
 
 
-l_symbols = list(range(10000))
-a, r, ra, rb = symbols("a r ra rb")
-
-def S(n="") :
-    s = symbols("%s_%d" % (n, l_symbols.pop(0)))
-    return s
-
-def Pf(n="") :
-    x = symbols("x%s_%d" % (n, l_symbols.pop(0)))
-    y = symbols("y%s_%d" % (n, l_symbols.pop(0)))
-    return Point2D(x, y)
 
 
 A = Pf("A")
