@@ -5,4 +5,6 @@ startx :
 	python optics.py
 
 start :
-	python compas.py
+	python compas2.py
+#	python xxx.py
+
