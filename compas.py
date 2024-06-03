@@ -10,7 +10,7 @@ import random
 from sympy import symbols, sqrt
 import spb
 from sympy.plotting import plot, plot_implicit
-
+import importlib
     
 
 """
@@ -123,6 +123,23 @@ class Line :
         return sympy.Line(self.A.subs(su),
                           self.B.subs(su))
 
+def totorch(v, s, vn) :
+    EKO()
+    #f1 = lambdify(v, s, "numpy")
+    os.makedirs("gen", exist_ok = True)
+    #EKOX(s)
+    EKO()
+    with open("f2.py", "w") as fd :
+        ss = """
+from torch import cos, sin, sqrt
+from compas import *
+def tfunc(%s) :
+    return %s """ % (vn, str(s))
+        fd.write(ss)
+    importlib.invalidate_caches()
+    imp = importlib.__import__("f2")
+    ff = getattr(imp, "tfunc")
+    return imp
 
     
 def yyy() :
@@ -148,67 +165,23 @@ def yyy() :
     
 def xxx() :
 
-    
     x, a, b, c = symbols("x, a, b, c")
-
-    
-
-
-
-
-    
     xa, ya, xc, yc, xq, yq, f, g, h, o, b , angle = symbols("xa ya, xc yc xq yq f g h o b angle", real=True)
     xb, yb = symbols("xb yb")
     f, g, h = symbols("f g h", Positive=True, real=True)
     A, C, Q, B = Point2D(xa, ya), Point2D(xc, yc), Point2D(xq, yq), Point2D(xb, yb)
 
-    EKOX(C.rotate(angle, A))
-    
-    
-
     b1 = symbols("b1", real=True)
-    
-    #angle = -pi/6
-
-    
-    if False :
-        A, C = sympy.Point2D(xa, ya), sympy.Point2D(xc, yc),
-        Cp = C.rotate(angle, A)
-        EKOX(Cp)
-
-
-    
     Ao = A + Point2D(f, 0)
-    EKOX(Ao)
     Cp = Ao.rotate(angle, A)
-
     d = Circle(Cp, o)
-
     c = Circle(B, b)
-
     F = intersection(d, c)
-    
     ca = Circle(A, f)
-    EKOX(ca)
-
     F0 = F[0]
-    EKOX(F0)
-
     dfcp = distance(F0, Cp)
-    EKOX(dfcp)
-    EKOX(F0)
-    EKOX(Cp)
-
     H = (F0 - Cp) / dfcp * b1 + Cp
-
     
-    #pac = ca.intersection(cc)[0] # delivers the answer after 30 sec
-    #EKOX(pac)
-    #Xpaq = intersection(ca, cq)[0]
-    #Xpac = intersection(ca, cc)[0]
-    #EKOX(Xpac)
-    #paq = ca.intersection(cq)[0]
-    EKO()
     sss = [(angle, -pi/15),
            (xa, -16), (ya, 11.2),
            (xb, -15.9), (yb, 6.4),
@@ -217,19 +190,15 @@ def xxx() :
            (b1, 8.1),
            (xc, 7), (yc, 3), (h, 2) ]
     sss += [ (xq, 4), (yq, 3), (g, 4)]
-    #cc.equation().subs(sss)
-    #EKOX(pac.subs(sss))
     EKO()
-    #P = cr.intersection(ca)
-    EKO()
-    #B = cr.intersection(cc)
-    EKO()
-    
-    #EKOX(ca.subs(sss))
-    #graphics(geometry(ca.subs(sss), fill=False, label='ca'))
+    f = totorch([angle, xa, ya, xb, yb, o, b, f, b1, xc, yc, h, xq, yq, g],
+                H,
+                "angle, xa, ya, xb, yb, o, b, f, b1, xc, yc, h, xq, yq, g")
 
-    EKO()
-
+    # en torch
+    EKOX(f.tfunc(*[ torch.tensor(float(e[1])) for e in sss]))
+    # en sympy
+    #EKOX(H.subs(sss))
     
     graphics(geometry(ca.subs(sss), fill=False, label='ca'),
              #geometry(cq.subs(sss), fill=False, label='cq'),
